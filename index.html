@@ -2,10 +2,141 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>나의 첫 웹페이지</title>
+    <title>PyWebWinUI3 소개</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
 </head>
 <body>
-    <h1>나의 첫 웹페이지</h1>
-    <p>안녕하세요! 처음 만든 웹페이지입니다.</p>
+    <!--
+        사용자: Python으로 Windows 데스크톱 앱을 만들려는 개발자
+        목적: PyWebWinUI3의 특징과 사용 방법을 소개한다.
+        핵심 행동: 사용 방법과 예제를 확인하고, 궁금한 점은 문의 폼으로 남긴다.
+        정보 순서: 서비스 이름과 한 줄 소개 → 서비스 소개 → 활용 예시 → 주요 기능 → 컴포넌트 → 사용법 → 실제 화면 → 문의
+    -->
+    <header>
+        <h1>PyWebWinUI3</h1>
+        <p>Python 코드와 XAML 형식의 마크업으로 Windows 데스크톱 UI를 만드는 프레임워크</p>
+        <nav>
+            <ul>
+                <li><a href="#introduction">소개</a></li>
+                <li><a href="#usecases">활용</a></li>
+                <li><a href="#features">특징</a></li>
+                <li><a href="#components">컴포넌트</a></li>
+                <li><a href="#usage">사용법</a></li>
+                <li><a href="#preview">제작 예시</a></li>
+                <li><a href="#contact">문의</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="introduction">
+            <h2>Python에서 간편하게 만드는 WinUI 스타일 UI</h2>
+            <p>PyWebWinUI3는 Python 프로그램에 Windows용 GUI를 붙이기 위한 프레임워크입니다. 화면은 XAML과 비슷한 형식으로 작성하고, 상태와 이벤트는 Python 코드에서 처리합니다.</p>
+            <p>창은 pywebview가 열고 내부 UI는 Edge WebView2에서 Svelte로 렌더링됩니다. 시스템 테마와 강조색을 따라가며, 제목 표시줄과 창 동작도 Windows 앱에 맞게 처리합니다.</p>
+            <p>빌드된 프런트엔드가 패키지에 포함되어 있으므로 앱을 만드는 쪽에서는 Node.js나 Svelte 프로젝트를 따로 설정할 필요가 없습니다.</p>
+        </section>
+        <section id="usecases">
+            <h2>어디에 쓰기 좋나요</h2>
+            <ul>
+                <li>옵션이 많은 Python 프로그램의 설정 화면</li>
+                <li>진행률, 상태, 로그를 보여주는 대시보드</li>
+                <li>파일 처리나 데이터 변환 같은 업무용 도구</li>
+                <li>Python으로 만든 기능에 GUI를 붙여 보는 프로토타입</li>
+            </ul>
+            <p>실제 구성은 저장소의 <code>example/</code> 폴더에 있는 Python 코드와 Dashboard, Settings, Test XAML 페이지에서 확인할 수 있습니다.</p>
+            <p><a href="https://github.com/Haruna5718/PyWebWinUI3" target="_blank" rel="noopener noreferrer">GitHub에서 소스와 예제 보기</a></p>
+        </section>
+        <section id="features">
+            <h2>주요 기능</h2>
+            <ul>
+                <li><strong>XAML 페이지</strong> — 화면 구조는 <code>Page</code>, <code>Box</code>, <code>Horizontal</code>, <code>Button</code> 같은 태그로 작성합니다.</li>
+                <li><strong><code>app.values</code></strong> — Python에서 넣은 값을 <code>{user_name}</code>처럼 표시하고, Input이나 Switch에서 바뀐 값도 다시 받을 수 있습니다.</li>
+                <li><strong>이벤트</strong> — 값 변경, 앱 준비, 창 닫기, 종료와 강조색 변경을 데코레이터로 처리합니다.</li>
+                <li><strong>메시지와 알림</strong> — Python과 프런트엔드가 메시지를 주고받을 수 있고, <code>notice()</code>로 상태 알림을 표시할 수 있습니다.</li>
+                <li><strong>창 제어</strong> — 최소화, 최대화, 복원, 항상 위 고정과 최소화 시작을 지원합니다.</li>
+                <li><strong>Windows 테마 연동</strong> — 시스템의 라이트·다크 모드와 강조색 변경을 UI에 반영합니다.</li>
+            </ul>
+        </section>
+        <section id="components">
+            <h2>컴포넌트</h2>
+            <p>현재 XAML 페이지에서 사용할 수 있는 태그는 다음과 같습니다.</p>
+            <p><strong>페이지와 레이아웃:</strong> Page, Box, Horizontal, Vertical, Space, Line, Expender</p>
+            <p><strong>텍스트와 입력:</strong> Text, Button, Input, Slider, Switch, Check, Radio, Select, Option</p>
+            <p><strong>콘텐츠와 상태:</strong> Image, Webview, Progressbar</p>
+            <p><strong>조건과 반복:</strong> If, Match, Repeat *</p>
+            <p>* <code>If</code>와 <code>Match</code>는 상태에 따라 다른 자식 요소를 보여주고, <code>Repeat</code>는 지정한 데이터나 횟수에 맞춰 자식 요소를 반복해서 렌더링합니다.</p>
+        </section>
+        <section id="usage">
+            <h2>설치와 기본 예제</h2>
+            <ol>
+                <li>Windows에서 Python 3.10 이상을 준비합니다.</li>
+                <li><code>pip install PyWebWinUI3</code>로 패키지를 설치합니다.</li>
+                <li><code>MainWindow</code>를 만들고 <code>addPage()</code> 또는 <code>addSettings()</code>로 XAML 파일을 등록합니다.</li>
+                <li>필요한 값과 이벤트를 연결한 뒤 <code>app.start()</code>를 호출합니다.</li>
+            </ol>
+            <p>아래 예제는 작업 이름과 진행률을 표시하고, 버튼을 누르면 Python에서 값을 바꾼 뒤 완료 알림을 띄웁니다.</p>
+            <h3>Python 예제</h3>
+            <pre><code>from pywebwinui3.core import MainWindow
+from pywebwinui3.type import Status
+
+app = MainWindow("작업 관리자")
+app.addPage("Dashboard.xaml")
+
+app.values["task_name"] = "이미지 변환"
+app.values["progress"] = 35
+app.values["auto_start"] = False
+
+@app.onValueChange("run_task")
+def run_task(*_):
+    app.values["progress"] = 100
+    app.notice(Status.Success, "작업 완료", "이미지 변환이 끝났습니다.")
+
+app.start()</code></pre>
+            <h3>Dashboard.xaml 예제</h3>
+            <pre><code>&lt;Page path="" icon="&amp;#xE80F;" name="Dashboard"&gt;
+    &lt;Vertical&gt;
+        &lt;Text type="title"&gt;{task_name}&lt;/Text&gt;
+        &lt;Text type="description"&gt;진행률: {progress}%&lt;/Text&gt;
+        &lt;Progressbar data="{progress}" type="progress" /&gt;
+        &lt;Box&gt;
+            &lt;Horizontal&gt;
+                &lt;Text&gt;자동 시작&lt;/Text&gt;
+                &lt;Switch value="auto_start" /&gt;
+                &lt;Space /&gt;
+                &lt;Button value="run_task"&gt;작업 실행&lt;/Button&gt;
+            &lt;/Horizontal&gt;
+        &lt;/Box&gt;
+    &lt;/Vertical&gt;
+&lt;/Page&gt;</code></pre>
+        </section>
+        <section id="preview">
+            <h2>제작 예시</h2>
+            <figure>
+                <img src="image.png" alt="PyWebWinUI3로 만든 Windows 데스크톱 앱의 실제 실행 화면">
+            </figure>
+        </section>
+        <section id="contact">
+            <h2>문의</h2>
+            <p>사용 방법이나 프로젝트에 대해 궁금한 점을 남겨 주세요.</p>
+            <form>
+                <div>
+                    <label for="contact-name">이름</label>
+                    <input type="text" id="contact-name" name="name" required>
+                </div>
+                <div>
+                    <label for="contact-email">이메일</label>
+                    <input type="email" id="contact-email" name="email" required>
+                </div>
+                <div>
+                    <label for="contact-message">문의 내용</label>
+                    <textarea id="contact-message" name="message" rows="5" required></textarea>
+                </div>
+                <button type="submit">문의 보내기</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <small>&copy; 2026 Haruna5718</small>
+    </footer>
 </body>
 </html>
