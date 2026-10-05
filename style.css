@@ -84,7 +84,8 @@ nav a:focus-visible {
 }
 
 main {
-    width: min(1040px, calc(100% - 48px));
+    width: calc(100% - 48px);
+    max-width: 1040px;
     margin: 0 auto;
     padding: 12px 0 96px;
 }
@@ -279,6 +280,7 @@ pre code {
 #preview img {
     display: block;
     width: 100%;
+    max-width: 100%;
     height: auto;
     border-radius: 7px;
 }
@@ -397,4 +399,100 @@ footer small {
 :focus-visible {
     outline: 3px solid rgba(74, 163, 223, 0.55);
     outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 15px;
+    }
+
+    header {
+        padding: 48px 24px 28px;
+    }
+
+    header h1 {
+        font-size: clamp(36px, 11vw, 42px);
+    }
+
+    header > p {
+        margin-top: 16px;
+        font-size: 16px;
+    }
+
+    nav {
+        margin-top: 28px;
+        padding-top: 16px;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    nav a {
+        display: block;
+        padding: 8px 0;
+    }
+
+    main {
+        width: calc(100% - 32px);
+        padding-bottom: 64px;
+    }
+
+    section {
+        padding: 44px 0;
+    }
+
+    h2 {
+        margin-bottom: 20px;
+        font-size: 28px;
+    }
+
+    #introduction {
+        padding-top: 48px;
+    }
+
+    #introduction h2 {
+        font-size: clamp(30px, 9vw, 38px);
+    }
+
+    #usecases ul,
+    #features ul,
+    form {
+        grid-template-columns: 1fr;
+    }
+
+    #features li {
+        min-height: 0;
+    }
+
+    form div:last-of-type,
+    form button {
+        grid-column: auto;
+    }
+
+    form button {
+        width: 100%;
+    }
+
+    #contact {
+        margin-top: 48px;
+        padding: 30px 22px;
+    }
+
+    pre {
+        padding: 18px;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    * {
+        transition-duration: 0.01ms !important;
+    }
 }
