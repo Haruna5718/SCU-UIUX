@@ -329,6 +329,32 @@ form button {
     grid-column: 1 / -1;
 }
 
+.form-status {
+    grid-column: 1 / -1;
+    min-height: 0;
+    margin: 0;
+    color: var(--muted);
+    font-weight: 650;
+}
+
+.form-status:not(:empty) {
+    padding: 11px 13px;
+    border: 1px solid;
+    border-radius: 6px;
+}
+
+.form-status.is-error {
+    color: #8b2d2d;
+    background: #fff1f1;
+    border-color: #efc5c5;
+}
+
+.form-status.is-success {
+    color: #25613d;
+    background: #eef8f1;
+    border-color: #badcc5;
+}
+
 label {
     color: #2f3d49;
     font-size: 14px;
@@ -383,6 +409,13 @@ button:hover {
 
 button:active {
     transform: translateY(1px);
+}
+
+button:disabled {
+    color: #d8e3eb;
+    background: #6f8495;
+    cursor: default;
+    transform: none;
 }
 
 footer {
