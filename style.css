@@ -148,6 +148,63 @@ main a:hover {
     font-size: 17px;
 }
 
+#quick-guide > p {
+    margin-bottom: 24px;
+}
+
+.tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    padding: 7px;
+    background: #e9eef2;
+    border-radius: 9px;
+}
+
+.tab-button {
+    width: 100%;
+    min-width: 0;
+    padding: 10px 14px;
+    color: #455563;
+    background: transparent;
+    border: 1px solid transparent;
+    box-shadow: none;
+}
+
+.tab-button:hover {
+    color: #1d3a50;
+    background: rgba(255, 255, 255, 0.55);
+}
+
+.tab-button.is-active {
+    color: #173a55;
+    background: #ffffff;
+    border-color: #d5dee6;
+    box-shadow: 0 1px 3px rgba(23, 35, 49, 0.08);
+}
+
+.tab-panel {
+    min-height: 150px;
+    padding: 28px 30px;
+    background: #f8fafb;
+    border: 1px solid var(--line);
+    border-top: 0;
+    border-radius: 0 0 9px 9px;
+}
+
+.tab-panel[hidden] {
+    display: none;
+}
+
+.tab-panel h3 {
+    margin: 0 0 10px;
+}
+
+.tab-panel p {
+    max-width: 780px;
+    margin: 0;
+}
+
 #usecases ul,
 #features ul {
     display: grid;
@@ -324,7 +381,7 @@ form div {
     gap: 7px;
 }
 
-form div:last-of-type,
+.form-wide,
 form button {
     grid-column: 1 / -1;
 }
@@ -362,12 +419,14 @@ label {
 }
 
 input,
+select,
 textarea,
 button {
     font: inherit;
 }
 
 input,
+select,
 textarea {
     width: 100%;
     padding: 11px 13px;
@@ -380,6 +439,7 @@ textarea {
 }
 
 input:focus,
+select:focus,
 textarea:focus {
     border-color: var(--blue);
     box-shadow: 0 0 0 3px rgba(40, 120, 183, 0.14);
@@ -388,6 +448,24 @@ textarea:focus {
 textarea {
     resize: vertical;
     min-height: 132px;
+}
+
+.field-note,
+.field-count {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+    transition: color 150ms ease;
+}
+
+.field-note.is-selected {
+    color: var(--blue-dark);
+    font-weight: 650;
+}
+
+.field-count.is-ready {
+    color: #25613d;
+    font-weight: 650;
 }
 
 button {
@@ -495,11 +573,20 @@ footer small {
         grid-template-columns: 1fr;
     }
 
+    .tabs {
+        grid-template-columns: 1fr;
+    }
+
+    .tab-panel {
+        min-height: 0;
+        padding: 22px 20px;
+    }
+
     #features li {
         min-height: 0;
     }
 
-    form div:last-of-type,
+    .form-wide,
     form button {
         grid-column: auto;
     }
