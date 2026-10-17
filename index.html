@@ -9,10 +9,11 @@
 </head>
 <body>
     <!--
-        사용자: Python으로 Windows 데스크톱 앱을 만들려는 개발자
-        목적: PyWebWinUI3의 특징과 사용 방법을 소개한다.
-        핵심 행동: 사용 방법과 예제를 확인하고, 궁금한 점은 문의 폼으로 남긴다.
-        정보 순서: 서비스 이름과 한 줄 소개 → 서비스 소개 → 빠른 안내 → 활용 예시 → 주요 기능 → 컴포넌트 → 사용법 → 실제 제작 사례 → 문의
+        주요 사용자: Python으로 Windows 데스크톱 앱을 만들려는 개발자
+        사용자 목표: PyWebWinUI3의 특징과 사용 방법을 확인하고 자신의 프로젝트 시작 구성을 정한다.
+        핵심 행동: 프로젝트 정보를 입력·선택하고 추천 구성을 확인한다.
+        완료 조건: 입력한 정보가 확인 화면에 반영되고 프로젝트에 맞는 시작 구성이 표시된다.
+        정보 순서: 서비스 이름과 한 줄 소개 → 서비스 소개 → 빠른 안내 → 활용 예시 → 주요 기능 → 컴포넌트 → 사용법 → 시작 도우미 → 실제 제작 사례 → 문의
     -->
     <header>
         <h1>PyWebWinUI3</h1>
@@ -25,6 +26,7 @@
                 <li><a href="#features">특징</a></li>
                 <li><a href="#components">컴포넌트</a></li>
                 <li><a href="#usage">사용법</a></li>
+                <li><a href="#planner">시작 도우미</a></li>
                 <li><a href="#preview">제작 사례</a></li>
                 <li><a href="#contact">문의</a></li>
             </ul>
@@ -131,6 +133,91 @@ app.start()</code></pre>
         &lt;/Box&gt;
     &lt;/Vertical&gt;
 &lt;/Page&gt;</code></pre>
+        </section>
+        <section id="planner">
+            <h2>프로젝트 시작 도우미</h2>
+            <p>만들 앱의 목적과 필요한 기능을 선택하면 PyWebWinUI3에서 사용할 첫 페이지와 컴포넌트를 추천합니다.</p>
+            <ol class="flow-progress" aria-label="프로젝트 시작 구성 진행 단계">
+                <li class="is-active" data-planner-step="1" aria-current="step"><span>1</span> 시작</li>
+                <li data-planner-step="2"><span>2</span> 입력</li>
+                <li data-planner-step="3"><span>3</span> 확인</li>
+                <li data-planner-step="4"><span>4</span> 완료</li>
+            </ol>
+
+            <div id="planner-start-step" class="flow-panel">
+                <h3 data-planner-heading tabindex="-1">어떤 앱을 만들지 정해 보세요</h3>
+                <p>프로젝트 이름과 주된 목적, 가장 필요한 화면 요소를 선택합니다. 입력한 내용은 추천을 만들기 전에 확인할 수 있습니다.</p>
+                <button type="button" id="planner-start">시작 구성 만들기</button>
+            </div>
+
+            <form id="planner-form" novalidate hidden>
+                <div id="planner-input-step" class="flow-panel">
+                    <h3 data-planner-heading tabindex="-1">프로젝트 정보 입력</h3>
+                    <p>세 항목을 모두 입력하거나 선택해 주세요.</p>
+                    <div class="planner-grid">
+                        <div class="form-wide">
+                            <label for="planner-name">프로젝트 이름</label>
+                            <input type="text" id="planner-name" name="project-name" placeholder="예: 작업 현황 도구" required>
+                        </div>
+                        <div>
+                            <label for="planner-purpose">앱의 주된 목적</label>
+                            <select id="planner-purpose" name="purpose" required>
+                                <option value="">목적을 선택해 주세요</option>
+                                <option value="dashboard">상태와 진행률 확인</option>
+                                <option value="settings">옵션과 설정 관리</option>
+                                <option value="automation">반복 작업 실행</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="planner-focus">가장 필요한 기능</label>
+                            <select id="planner-focus" name="focus" required>
+                                <option value="">기능을 선택해 주세요</option>
+                                <option value="status">상태와 진행률 표시</option>
+                                <option value="input">사용자 입력과 선택</option>
+                                <option value="action">작업 실행과 결과 안내</option>
+                            </select>
+                        </div>
+                        <p id="planner-status" class="form-status" role="status" aria-live="polite"></p>
+                    </div>
+                    <div class="flow-actions">
+                        <button type="button" class="button-secondary" id="planner-to-start">이전</button>
+                        <button type="button" id="planner-to-confirm">구성 확인</button>
+                    </div>
+                </div>
+
+                <div id="planner-confirm-step" class="flow-panel" hidden>
+                    <h3 data-planner-heading tabindex="-1">선택한 구성 확인</h3>
+                    <p>추천을 만들기 전에 입력한 내용이 맞는지 확인해 주세요.</p>
+                    <dl class="flow-summary">
+                        <div>
+                            <dt>프로젝트 이름</dt>
+                            <dd id="planner-confirm-name">-</dd>
+                        </div>
+                        <div>
+                            <dt>앱의 주된 목적</dt>
+                            <dd id="planner-confirm-purpose">-</dd>
+                        </div>
+                        <div>
+                            <dt>가장 필요한 기능</dt>
+                            <dd id="planner-confirm-focus">-</dd>
+                        </div>
+                    </dl>
+                    <div class="flow-actions">
+                        <button type="button" class="button-secondary" id="planner-edit">이전 단계</button>
+                        <button type="submit" id="planner-submit">추천 구성 만들기</button>
+                    </div>
+                </div>
+            </form>
+
+            <div id="planner-complete-step" class="flow-panel flow-complete" hidden>
+                <h3 data-planner-heading tabindex="-1">시작 구성 완성</h3>
+                <p id="planner-complete-message" class="complete-message" role="status" aria-live="polite"></p>
+                <div class="planner-result">
+                    <p><strong>첫 페이지</strong><span id="planner-result-page"></span></p>
+                    <p><strong>추천 컴포넌트</strong><span id="planner-result-components"></span></p>
+                </div>
+                <button type="button" id="planner-restart">다시 시작</button>
+            </div>
         </section>
         <section id="preview">
             <h2>실제 제작 사례: VRCUtil</h2>

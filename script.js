@@ -10,10 +10,43 @@ const submitButton = document.querySelector("#contact-submit");
 const tabButtons = [...document.querySelectorAll("[role='tab']")];
 const tabPanels = [...document.querySelectorAll("[role='tabpanel']")];
 
+const plannerForm = document.querySelector("#planner-form");
+const plannerName = document.querySelector("#planner-name");
+const plannerPurpose = document.querySelector("#planner-purpose");
+const plannerFocus = document.querySelector("#planner-focus");
+const plannerStatus = document.querySelector("#planner-status");
+const plannerStartStep = document.querySelector("#planner-start-step");
+const plannerInputStep = document.querySelector("#planner-input-step");
+const plannerConfirmStep = document.querySelector("#planner-confirm-step");
+const plannerCompleteStep = document.querySelector("#planner-complete-step");
+const plannerSteps = [...document.querySelectorAll("[data-planner-step]")];
+const plannerSummary = {
+    name: document.querySelector("#planner-confirm-name"),
+    purpose: document.querySelector("#planner-confirm-purpose"),
+    focus: document.querySelector("#planner-confirm-focus")
+};
+const plannerResult = {
+    message: document.querySelector("#planner-complete-message"),
+    page: document.querySelector("#planner-result-page"),
+    components: document.querySelector("#planner-result-components")
+};
+
 const typeGuides = {
     usage: "사용 중인 Python 버전과 진행한 단계를 함께 적어 주세요.",
     bug: "오류가 발생한 상황과 표시된 메시지를 함께 적어 주세요.",
     feature: "만들고 싶은 화면이나 필요한 동작을 구체적으로 적어 주세요."
+};
+
+const purposeRecommendations = {
+    dashboard: { page: "Dashboard.xaml", components: "Vertical, Box, Text, Progressbar" },
+    settings: { page: "Settings.xaml", components: "Vertical, Input, Select, Switch" },
+    automation: { page: "Workspace.xaml", components: "Vertical, Button, Text, Progressbar" }
+};
+
+const focusRecommendations = {
+    status: "Text, Progressbar, notice()",
+    input: "Input, Select, Switch",
+    action: "Button, Text, notice()"
 };
 
 function setFormState(message = "", type = "") {
@@ -90,6 +123,122 @@ form.addEventListener("input", () => {
     setFormState();
 });
 typeSelect.addEventListener("change", updateTypeGuide);
+
+function setPlannerStatus(message = "") {
+    plannerStatus.textContent = message;
+    plannerStatus.className = `form-status${message ? " is-error" : ""}`;
+}
+
+function showPlannerStep(step) {
+    const panels = { 1: plannerStartStep, 2: plannerInputStep, 3: plannerConfirmStep, 4: plannerCompleteStep };
+
+    plannerStartStep.hidden = step !== 1;
+    plannerForm.hidden = step !== 2 && step !== 3;
+    plannerInputStep.hidden = step !== 2;
+    plannerConfirmStep.hidden = step !== 3;
+    plannerCompleteStep.hidden = step !== 4;
+
+    plannerSteps.forEach((item) => {
+        const itemStep = Number(item.dataset.plannerStep);
+        const isActive = itemStep === step;
+
+        item.classList.toggle("is-active", isActive);
+        item.classList.toggle("is-complete", itemStep < step);
+        if (isActive) {
+            item.setAttribute("aria-current", "step");
+        } else {
+            item.removeAttribute("aria-current");
+        }
+    });
+
+    panels[step].querySelector("[data-planner-heading]").focus();
+}
+
+function getPlannerValues() {
+    return {
+        name: plannerName.value.trim(),
+        purpose: plannerPurpose.value,
+        purposeLabel: plannerPurpose.options[plannerPurpose.selectedIndex].textContent,
+        focus: plannerFocus.value,
+        focusLabel: plannerFocus.options[plannerFocus.selectedIndex].textContent
+    };
+}
+
+function validatePlanner() {
+    const values = getPlannerValues();
+
+    if (!values.name || !values.purpose || !values.focus) {
+        const field = !values.name ? plannerName : !values.purpose ? plannerPurpose : plannerFocus;
+        return { message: "프로젝트 이름과 목적, 필요한 기능을 모두 입력해 주세요.", field, values };
+    }
+
+    return { values };
+}
+
+function updatePlannerSummary(values) {
+    plannerSummary.name.textContent = values.name;
+    plannerSummary.purpose.textContent = values.purposeLabel;
+    plannerSummary.focus.textContent = values.focusLabel;
+}
+
+function handlePlannerConfirm() {
+    const result = validatePlanner();
+
+    if (result.field) {
+        setPlannerStatus(result.message);
+        result.field.focus();
+        return;
+    }
+
+    updatePlannerSummary(result.values);
+    setPlannerStatus();
+    showPlannerStep(3);
+}
+
+function handlePlannerSubmit(event) {
+    event.preventDefault();
+    const result = validatePlanner();
+
+    if (result.field) {
+        showPlannerStep(2);
+        setPlannerStatus(result.message);
+        result.field.focus();
+        return;
+    }
+
+    const purpose = purposeRecommendations[result.values.purpose];
+    plannerResult.message.textContent = `${result.values.name}의 시작 구성을 만들었습니다.`;
+    plannerResult.page.textContent = purpose.page;
+    plannerResult.components.textContent = `${purpose.components}, ${focusRecommendations[result.values.focus]}`;
+    showPlannerStep(4);
+}
+
+function restartPlanner() {
+    plannerForm.reset();
+    setPlannerStatus();
+    Object.values(plannerSummary).forEach((field) => {
+        field.textContent = "-";
+    });
+    Object.values(plannerResult).forEach((field) => {
+        field.textContent = "";
+    });
+    showPlannerStep(1);
+}
+
+document.querySelector("#planner-start").addEventListener("click", () => showPlannerStep(2));
+document.querySelector("#planner-to-start").addEventListener("click", () => {
+    setPlannerStatus();
+    showPlannerStep(1);
+});
+document.querySelector("#planner-to-confirm").addEventListener("click", handlePlannerConfirm);
+document.querySelector("#planner-edit").addEventListener("click", () => {
+    setPlannerStatus();
+    showPlannerStep(2);
+});
+document.querySelector("#planner-restart").addEventListener("click", restartPlanner);
+plannerForm.addEventListener("submit", handlePlannerSubmit);
+plannerForm.addEventListener("input", () => setPlannerStatus());
+plannerForm.addEventListener("change", () => setPlannerStatus());
 
 tabButtons.forEach((button, index) => {
     button.addEventListener("click", () => selectTab(button));
