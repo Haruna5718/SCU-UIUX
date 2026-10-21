@@ -390,7 +390,7 @@ pre code {
 
 .flow-progress {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 8px;
     margin: 0 0 18px;
     padding: 0;
@@ -575,6 +575,86 @@ form[hidden] {
     overflow-wrap: anywhere;
 }
 
+.checklist-progress {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.checklist-progress progress {
+    width: 100%;
+    height: 12px;
+    accent-color: #2f7d4c;
+}
+
+.checklist-progress p {
+    margin: 0;
+    color: #40505d;
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.implementation-checklist {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+}
+
+.implementation-checklist legend {
+    padding: 0 7px;
+    color: #2f3d49;
+    font-weight: 700;
+}
+
+.implementation-checklist label {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 12px 13px;
+    background: var(--soft);
+    border: 1px solid #e2e8ed;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.implementation-checklist input {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    margin: 3px 0 0;
+    accent-color: var(--blue-dark);
+}
+
+#checklist-status {
+    margin-top: 18px;
+}
+
+.checklist-success {
+    margin-top: 24px;
+    padding: 22px;
+    background: #eef8f1;
+    border: 1px solid #badcc5;
+    border-radius: 7px;
+}
+
+.checklist-success[hidden],
+#checklist-work[hidden] {
+    display: none;
+}
+
+.checklist-success .complete-message {
+    margin-bottom: 6px;
+}
+
+.checklist-success button {
+    margin-top: 10px;
+}
+
 label {
     color: #2f3d49;
     font-size: 14px;
@@ -757,6 +837,11 @@ footer small {
 
     .flow-progress {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .checklist-progress {
+        grid-template-columns: 1fr;
+        gap: 5px;
     }
 
     .flow-panel {

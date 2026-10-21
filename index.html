@@ -11,8 +11,8 @@
     <!--
         주요 사용자: Python으로 Windows 데스크톱 앱을 만들려는 개발자
         사용자 목표: PyWebWinUI3의 특징과 사용 방법을 확인하고 자신의 프로젝트 시작 구성을 정한다.
-        핵심 행동: 프로젝트 정보를 입력·선택하고 추천 구성을 확인한다.
-        완료 조건: 입력한 정보가 확인 화면에 반영되고 프로젝트에 맞는 시작 구성이 표시된다.
+        핵심 행동: 프로젝트 정보를 입력·선택하고 추천 구성과 구현 준비 상태를 확인한다.
+        완료 조건: 프로젝트에 맞는 시작 구성이 표시되고 구현 준비 항목을 모두 확인한다.
         정보 순서: 서비스 이름과 한 줄 소개 → 서비스 소개 → 빠른 안내 → 활용 예시 → 주요 기능 → 컴포넌트 → 사용법 → 시작 도우미 → 실제 제작 사례 → 문의
     -->
     <header>
@@ -142,6 +142,7 @@ app.start()</code></pre>
                 <li data-planner-step="2"><span>2</span> 입력</li>
                 <li data-planner-step="3"><span>3</span> 확인</li>
                 <li data-planner-step="4"><span>4</span> 완료</li>
+                <li data-planner-step="5"><span>5</span> 준비</li>
             </ol>
 
             <div id="planner-start-step" class="flow-panel">
@@ -216,7 +217,37 @@ app.start()</code></pre>
                     <p><strong>첫 페이지</strong><span id="planner-result-page"></span></p>
                     <p><strong>추천 컴포넌트</strong><span id="planner-result-components"></span></p>
                 </div>
-                <button type="button" id="planner-restart">다시 시작</button>
+                <div class="flow-actions">
+                    <button type="button" id="planner-open-checklist">구현 준비 확인</button>
+                    <button type="button" class="button-secondary" id="planner-restart">다시 시작</button>
+                </div>
+            </div>
+
+            <div id="planner-checklist-step" class="flow-panel" hidden>
+                <h3 data-planner-heading tabindex="-1">구현 준비 체크리스트</h3>
+                <p><strong id="checklist-project-name"></strong>의 추천 구성을 실제 프로젝트에 적용하기 전에 필요한 준비를 확인합니다.</p>
+                <div id="checklist-work">
+                    <div class="checklist-progress">
+                        <progress id="checklist-progress" max="3" value="0" aria-describedby="checklist-progress-text"></progress>
+                        <p id="checklist-progress-text">0/3 완료</p>
+                    </div>
+                    <fieldset class="implementation-checklist">
+                        <legend>완료한 준비 항목을 선택하세요</legend>
+                        <label><input type="checkbox" name="implementation-task" value="page"><span id="checklist-page-task"></span></label>
+                        <label><input type="checkbox" name="implementation-task" value="components"><span>추천 컴포넌트를 XAML 화면에 배치하기</span></label>
+                        <label><input type="checkbox" name="implementation-task" value="register"><span id="checklist-register-task"></span></label>
+                    </fieldset>
+                    <p id="checklist-status" class="form-status" role="status" aria-live="polite"></p>
+                    <div class="flow-actions">
+                        <button type="button" class="button-secondary" id="checklist-back">추천 결과로 돌아가기</button>
+                        <button type="button" id="checklist-complete" disabled>준비 완료</button>
+                    </div>
+                </div>
+                <div id="checklist-success" class="checklist-success" hidden>
+                    <p id="checklist-success-message" class="complete-message" role="status" aria-live="polite"></p>
+                    <p>추천 페이지와 컴포넌트를 기준으로 구현을 시작할 수 있습니다.</p>
+                    <button type="button" id="planner-restart-from-checklist">새 구성 만들기</button>
+                </div>
             </div>
         </section>
         <section id="preview">

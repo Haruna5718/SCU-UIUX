@@ -19,6 +19,7 @@ const plannerStartStep = document.querySelector("#planner-start-step");
 const plannerInputStep = document.querySelector("#planner-input-step");
 const plannerConfirmStep = document.querySelector("#planner-confirm-step");
 const plannerCompleteStep = document.querySelector("#planner-complete-step");
+const plannerChecklistStep = document.querySelector("#planner-checklist-step");
 const plannerSteps = [...document.querySelectorAll("[data-planner-step]")];
 const plannerSummary = {
     name: document.querySelector("#planner-confirm-name"),
@@ -30,6 +31,13 @@ const plannerResult = {
     page: document.querySelector("#planner-result-page"),
     components: document.querySelector("#planner-result-components")
 };
+const checklistItems = [...document.querySelectorAll("[name='implementation-task']")];
+const checklistProgress = document.querySelector("#checklist-progress");
+const checklistProgressText = document.querySelector("#checklist-progress-text");
+const checklistStatus = document.querySelector("#checklist-status");
+const checklistCompleteButton = document.querySelector("#checklist-complete");
+const checklistWork = document.querySelector("#checklist-work");
+const checklistSuccess = document.querySelector("#checklist-success");
 
 const typeGuides = {
     usage: "사용 중인 Python 버전과 진행한 단계를 함께 적어 주세요.",
@@ -130,13 +138,14 @@ function setPlannerStatus(message = "") {
 }
 
 function showPlannerStep(step) {
-    const panels = { 1: plannerStartStep, 2: plannerInputStep, 3: plannerConfirmStep, 4: plannerCompleteStep };
+    const panels = { 1: plannerStartStep, 2: plannerInputStep, 3: plannerConfirmStep, 4: plannerCompleteStep, 5: plannerChecklistStep };
 
     plannerStartStep.hidden = step !== 1;
     plannerForm.hidden = step !== 2 && step !== 3;
     plannerInputStep.hidden = step !== 2;
     plannerConfirmStep.hidden = step !== 3;
     plannerCompleteStep.hidden = step !== 4;
+    plannerChecklistStep.hidden = step !== 5;
 
     plannerSteps.forEach((item) => {
         const itemStep = Number(item.dataset.plannerStep);
@@ -213,9 +222,63 @@ function handlePlannerSubmit(event) {
     showPlannerStep(4);
 }
 
+function setChecklistStatus(message, type = "") {
+    checklistStatus.textContent = message;
+    checklistStatus.className = `form-status${type ? ` is-${type}` : ""}`;
+}
+
+function updateChecklist() {
+    const completed = checklistItems.filter((item) => item.checked).length;
+    const remaining = checklistItems.length - completed;
+
+    checklistProgress.value = completed;
+    checklistProgressText.textContent = `${completed}/${checklistItems.length} 완료`;
+    checklistCompleteButton.disabled = remaining > 0;
+
+    if (completed === 0) {
+        setChecklistStatus("완료한 준비 항목을 하나씩 선택해 주세요.");
+    } else if (remaining > 0) {
+        setChecklistStatus(`${remaining}개 항목이 남았습니다.`);
+    } else {
+        setChecklistStatus("모든 준비를 확인했습니다. 준비 완료를 선택해 주세요.", "success");
+    }
+}
+
+function openChecklist() {
+    const values = getPlannerValues();
+    const page = purposeRecommendations[values.purpose].page;
+
+    document.querySelector("#checklist-project-name").textContent = values.name;
+    document.querySelector("#checklist-page-task").textContent = `${page} 파일 만들기`;
+    document.querySelector("#checklist-register-task").textContent = `addPage(\"${page}\")로 페이지 등록하기`;
+    updateChecklist();
+    showPlannerStep(5);
+}
+
+function completeChecklist() {
+    if (checklistItems.some((item) => !item.checked)) {
+        setChecklistStatus("남은 준비 항목을 모두 선택해 주세요.", "error");
+        return;
+    }
+
+    checklistWork.hidden = true;
+    checklistSuccess.hidden = false;
+    document.querySelector("#checklist-success-message").textContent = `${getPlannerValues().name}의 구현 준비를 모두 확인했습니다.`;
+}
+
+function resetChecklist() {
+    checklistItems.forEach((item) => {
+        item.checked = false;
+    });
+    checklistWork.hidden = false;
+    checklistSuccess.hidden = true;
+    updateChecklist();
+}
+
 function restartPlanner() {
     plannerForm.reset();
     setPlannerStatus();
+    resetChecklist();
     Object.values(plannerSummary).forEach((field) => {
         field.textContent = "-";
     });
@@ -235,7 +298,12 @@ document.querySelector("#planner-edit").addEventListener("click", () => {
     setPlannerStatus();
     showPlannerStep(2);
 });
+document.querySelector("#planner-open-checklist").addEventListener("click", openChecklist);
+document.querySelector("#checklist-back").addEventListener("click", () => showPlannerStep(4));
+document.querySelector("#checklist-complete").addEventListener("click", completeChecklist);
 document.querySelector("#planner-restart").addEventListener("click", restartPlanner);
+document.querySelector("#planner-restart-from-checklist").addEventListener("click", restartPlanner);
+checklistItems.forEach((item) => item.addEventListener("change", updateChecklist));
 plannerForm.addEventListener("submit", handlePlannerSubmit);
 plannerForm.addEventListener("input", () => setPlannerStatus());
 plannerForm.addEventListener("change", () => setPlannerStatus());
