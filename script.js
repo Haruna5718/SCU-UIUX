@@ -5,10 +5,15 @@ const typeSelect = document.querySelector("#contact-type");
 const typeGuide = document.querySelector("#contact-type-guide");
 const messageInput = document.querySelector("#contact-message");
 const messageCount = document.querySelector("#message-count");
+const codeHelpCheckbox = document.querySelector("#contact-code-help");
+const codeFields = document.querySelector("#contact-code-fields");
+const codeInput = document.querySelector("#contact-code");
+const codeCount = document.querySelector("#contact-code-count");
 const statusMessage = document.querySelector("#contact-status");
 const submitButton = document.querySelector("#contact-submit");
 const tabButtons = [...document.querySelectorAll("[role='tab']")];
 const tabPanels = [...document.querySelectorAll("[role='tabpanel']")];
+let isSubmitting = false;
 
 const plannerForm = document.querySelector("#planner-form");
 const plannerName = document.querySelector("#planner-name");
@@ -60,8 +65,8 @@ const focusRecommendations = {
 function setFormState(message = "", type = "") {
     statusMessage.textContent = message;
     statusMessage.className = `form-status${type ? ` is-${type}` : ""}`;
-    submitButton.textContent = type === "success" ? "전송 완료" : type === "error" ? "입력 다시 확인" : "문의 보내기";
-    submitButton.disabled = type === "success";
+    submitButton.textContent = type === "pending" ? "전송 중..." : type === "success" ? "전송 완료" : type === "error" ? "입력 다시 확인" : "문의 보내기";
+    submitButton.disabled = type === "pending" || type === "success";
 }
 
 function selectTab(selectedButton) {
@@ -87,12 +92,36 @@ function updateMessageCount() {
     messageCount.classList.toggle("is-ready", isReady);
 }
 
+function updateCodeCount() {
+    const length = codeInput.value.trim().length;
+    const isReady = length >= 10;
+
+    codeCount.textContent = isReady ? `${length}자 입력 · 검토할 수 있습니다.` : `${length}자 입력 · 최소 10자`;
+    codeCount.classList.toggle("is-ready", isReady);
+}
+
+function toggleCodeFields() {
+    const isVisible = codeHelpCheckbox.checked;
+
+    codeFields.hidden = !isVisible;
+    codeInput.disabled = !isVisible;
+    codeHelpCheckbox.setAttribute("aria-expanded", String(isVisible));
+    if (!isVisible) {
+        codeInput.removeAttribute("aria-invalid");
+    }
+    if (!isSubmitting) {
+        setFormState();
+    }
+}
+
 function updateTypeGuide() {
     const guide = typeGuides[typeSelect.value];
 
     typeGuide.textContent = guide || "유형을 선택하면 작성 안내가 표시됩니다.";
     typeGuide.classList.toggle("is-selected", Boolean(guide));
-    setFormState();
+    if (!isSubmitting) {
+        setFormState();
+    }
 }
 
 function validateContact() {
@@ -100,6 +129,7 @@ function validateContact() {
     const email = emailInput.value.trim();
     const type = typeSelect.value;
     const message = messageInput.value.trim();
+    const code = codeInput.value.trim();
 
     if (!name || !email || !type || !message) {
         return { message: "이름, 이메일, 문의 유형, 문의 내용을 모두 입력해 주세요.", field: !name ? nameInput : !email ? emailInput : !type ? typeSelect : messageInput };
@@ -113,24 +143,54 @@ function validateContact() {
         return { message: "문의 내용은 10자 이상 입력해 주세요.", field: messageInput };
     }
 
-    return { message: `${name}님의 문의를 전송했습니다.` };
+    if (codeHelpCheckbox.checked && code.length < 10) {
+        return { message: "검토할 코드나 오류 메시지를 10자 이상 입력해 주세요.", field: codeInput };
+    }
+
+    return { message: `${name}님의 문의를 전송했습니다.`, values: { name, email, type, message, code: codeHelpCheckbox.checked ? code : "" } };
 }
 
-function handleSubmit(event) {
+async function handleSubmit(event) {
     event.preventDefault();
-    const result = validateContact();
-    const type = result.field ? "error" : "success";
+    if (isSubmitting) {
+        return;
+    }
 
-    setFormState(result.message, type);
-    result.field?.focus();
+    form.querySelectorAll("[aria-invalid='true']").forEach((field) => field.removeAttribute("aria-invalid"));
+    const result = validateContact();
+
+    if (result.field) {
+        result.field.setAttribute("aria-invalid", "true");
+        setFormState(result.message, "error");
+        result.field.focus();
+        return;
+    }
+
+    isSubmitting = true;
+    setFormState("문의 내용을 저장하고 있습니다.", "pending");
+
+    try {
+        await new Promise((resolve) => setTimeout(resolve, 600));
+        localStorage.setItem("pywebwinui3-contact", JSON.stringify({ ...result.values, submittedAt: new Date().toISOString() }));
+        setFormState(result.message, "success");
+    } catch {
+        setFormState("문의 저장에 실패했습니다. 입력 내용은 유지되니 브라우저 저장 설정을 확인하고 다시 시도해 주세요.", "error");
+    } finally {
+        isSubmitting = false;
+    }
 }
 
 form.addEventListener("submit", handleSubmit);
-form.addEventListener("input", () => {
+form.addEventListener("input", (event) => {
     updateMessageCount();
-    setFormState();
+    updateCodeCount();
+    event.target.removeAttribute("aria-invalid");
+    if (!isSubmitting) {
+        setFormState();
+    }
 });
 typeSelect.addEventListener("change", updateTypeGuide);
+codeHelpCheckbox.addEventListener("change", toggleCodeFields);
 
 function setPlannerStatus(message = "") {
     plannerStatus.textContent = message;

@@ -380,6 +380,7 @@ pre code {
 
 #contact form > div {
     display: grid;
+    align-content: start;
     gap: 7px;
 }
 
@@ -512,6 +513,12 @@ form[hidden] {
     color: #25613d;
     background: #eef8f1;
     border-color: #badcc5;
+}
+
+.form-status.is-pending {
+    color: #31556f;
+    background: #eef5fa;
+    border-color: #bfd5e5;
 }
 
 .flow-summary {
@@ -688,6 +695,13 @@ textarea:focus {
     box-shadow: 0 0 0 3px rgba(40, 120, 183, 0.14);
 }
 
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+    border-color: #b94a4a;
+    box-shadow: 0 0 0 3px rgba(185, 74, 74, 0.12);
+}
+
 textarea {
     resize: vertical;
     min-height: 132px;
@@ -709,6 +723,36 @@ textarea {
 .field-count.is-ready {
     color: #25613d;
     font-weight: 650;
+}
+
+.checkbox-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 14px;
+    background: #ffffff;
+    border: 1px solid #bdc8d2;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.checkbox-option input {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    margin: 3px 0 0;
+    accent-color: var(--blue-dark);
+}
+
+.conditional-field {
+    padding: 18px;
+    background: #ffffff;
+    border: 1px solid #d8e1e8;
+    border-radius: 7px;
+}
+
+.conditional-field[hidden] {
+    display: none !important;
 }
 
 button {
